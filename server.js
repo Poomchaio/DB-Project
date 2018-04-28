@@ -52,9 +52,96 @@ app.get('/getAll*', function (req, res) {
         const db = req.url.substring(7, req.url.length);
         con.query("SELECT * FROM " + db, function (err, result, fields) {
             con.release();
+
             if (err) throw err;
             console.log(result);
             res.send(result);
+            res.end();
+        });
+    });
+})
+
+app.get('/insert*/:statement', function (req, res) {
+    pool.getConnection(function (err, con) {
+        if (err) throw err;
+        const db = req.url.substring(7, req.url.length);
+        const index = db.indexOf("/");
+        const dbname = db.substring(0, index);
+        const statement = req.params.statement.split("_")
+        var queryStr = ""
+        for (i in statement) {
+            if (i == 0) {
+                queryStr += " " + statement[i]
+
+            }
+            else {
+                queryStr += " " + statement[i]
+            }
+        }
+        con.query("insert into " + dbname + queryStr, function (err, result, fields) {
+            con.release();
+
+            if (err) throw err;
+            console.log(result);
+            res.send(queryStr);
+            res.end();
+        });
+    });
+})
+
+app.get('/delete*/:statement', function (req, res) {
+    pool.getConnection(function (err, con) {
+        if (err) throw err;
+        const db = req.url.substring(7, req.url.length);
+        const index = db.indexOf("/");
+        const dbname = db.substring(0, index);
+        const statement = req.params.statement.split("_")
+        var queryStr = ""
+        for (i in statement) {
+            if (i == 0) {
+                queryStr += " " + statement[i]
+
+            }
+            else {
+                queryStr += " " + statement[i]
+            }
+        }
+        res.send("delete from " + dbname + queryStr)
+        con.query("delete from " + dbname + queryStr, function (err, result, fields) {
+            con.release();
+
+            if (err) throw err;
+            console.log(result);
+            res.send(queryStr);
+            res.end();
+        });
+    });
+})
+
+app.get('/update*/:statement', function (req, res) {
+    pool.getConnection(function (err, con) {
+        if (err) throw err;
+        const db = req.url.substring(7, req.url.length);
+        const index = db.indexOf("/");
+        const dbname = db.substring(0, index);
+        const statement = req.params.statement.split("_")
+        var queryStr = ""
+
+        for (i in statement) {
+            if (i == 0) {
+                queryStr += " " + statement[i]
+
+            }
+            else {
+                queryStr += " " + statement[i]
+            }
+        }
+        con.query("update " + dbname + " set " + queryStr, function (err, result, fields) {
+            con.release();
+
+            if (err) throw err;
+            console.log(result);
+            res.send(queryStr);
             res.end();
         });
     });
